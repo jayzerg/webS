@@ -1013,7 +1013,7 @@ class EnhancedLazadaScraper:
         self.driver = create_stealth_driver(
             user_agent=user_agent,
             proxy=proxy,
-            headless=False,
+            headless=True,
             config=self.config
         )
         
