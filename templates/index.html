@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCSO Lottery Results Search</title>
+    <style>
+        /* ============================================================================
+           CSS VARIABLES - Consistent Theming
+           ============================================================================ */
+        :root {
+            /* Primary Colors */
+            --primary-color: #1e3a5f;
+            --primary-light: #2d5a8a;
+            --primary-dark: #0f1f33;
+
+            /* Secondary Colors */
+            --secondary-color: #f5a623;
+            --secondary-light: #ffc857;
+            --secondary-dark: #c77b00;
+
+            /* Accent Colors */
+            --accent-gold: #ffd700;
+            --accent-red: #e63946;
+
+            /* Background Colors */
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-dark: #1a1a2e;
+
+            /* Text Colors */
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --text-white: #ffffff;
+
+            /* Status Colors */
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+
+            /* Border Colors */
+            --border-color: #dee2e6;
+            --border-focus: #1e3a5f;
+
+            /* Shadows */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+
+        /* ============================================================================
+           RESET & BASE STYLES
+           ============================================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--primary-dark) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* ============================================================================
+           LAYOUT
+           ============================================================================ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        .main-wrapper {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        /* ============================================================================
+           HEADER
+           ============================================================================ */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: var(--text-white);
+            padding: var(--spacing-xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            animation: shimmer 3s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .logo {
+            display: inline-block;
+            font-size: 3rem;
+            margin-bottom: var(--spacing-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================================================
+           SEARCH FORM SECTION
+           ============================================================================ */
+        .search-section {
+            padding: var(--spacing-xl);
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: var(--spacing-md);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: all var(--transition-normal);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-light);
+        }
+
+        /* Custom Select Styling */
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        /* Search Button */
+        .btn-search {
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-dark) 100%);
+            color: var(--text-white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            min-width: 160px;
+        }
+
+        .btn-search:hover {
+            background: linear-gradient(135deg, var(--secondary-light) 0%, var(--secondary-color) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-search:active {
+            transform: translateY(0);
+        }
+
+        .btn-search:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .btn-search.loading .spinner {
+            display: inline-block;
+        }
+
+        .btn-search.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .btn-quick {
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--primary-color);
+            color: var(--text-white);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-quick:hover {
+            background: var(--primary-light);
+        }
+
+        /* ============================================================================
+           RESULTS SECTION
+           ============================================================================ */
+        .results-section {
+            padding: var(--spacing-xl);
+            min-height: 400px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .results-header h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .results-count {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Table Container */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Data Table */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-secondary);
+        }
+
+        .results-table thead {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: var(--text-white);
+        }
+
+        .results-table th {
+            padding: var(--spacing-md);
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .results-table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: background var(--transition-fast);
+        }
+
+        .results-table tbody tr:nth-child(even) {
+            background: var(--bg-primary);
+        }
+
+        .results-table tbody tr:hover {
+            background: rgba(30, 58, 95, 0.05);
+        }
+
+        .results-table td {
+            padding: var(--spacing-md);
+            vertical-align: middle;
+        }
+
+        /* Game Name Styling */
+        .game-cell {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .game-badge {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--primary-color);
+            color: white;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Combination Styling */
+        .combination-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+        }
+
+        /* Jackpot Styling */
+        .jackpot-cell {
+            font-weight: 600;
+            color: var(--secondary-dark);
+        }
+
+        .jackpot-cell.high {
+            color: var(--accent-red);
+        }
+
+        /* Winners Styling */
+        .winners-cell {
+            text-align: center;
+        }
+
+        .winners-badge {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--success-color);
+            color: white;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .winners-badge.zero {
+            background: var(--text-light);
+        }
+
+        /* ============================================================================
+           EMPTY & ERROR STATES
+           ============================================================================ */
+        .empty-state,
+        .error-state {
+            text-align: center;
+            padding: var(--spacing-xl) * 2;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon,
+        .error-state .icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.5;
+        }
+
+        .error-state {
+            color: var(--error-color);
+        }
+
+        .error-state .icon {
+            color: var(--error-color);
+        }
+
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            border-left: 4px solid var(--error-color);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            border-radius: var(--radius-sm);
+        }
+
+        /* ============================================================================
+           LOADING STATE
+           ============================================================================ */
+        .loading-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .results-section {
+            position: relative;
+        }
+
+        /* ============================================================================
+           FOOTER
+           ============================================================================ */
+        .footer {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            text-align: center;
+            padding: var(--spacing-lg);
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================================================
+           RESPONSIVE DESIGN
+           ============================================================================ */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-search {
+                width: 100%;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: var(--spacing-sm);
+                font-size: 0.875rem;
+            }
+
+            .table-container {
+                margin: 0 calc(-1 * var(--spacing-lg));
+                border-radius: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: var(--spacing-sm);
+            }
+
+            .header {
+                padding: var(--spacing-lg);
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .search-section,
+            .results-section {
+                padding: var(--spacing-md);
+            }
+        }
+
+        /* ============================================================================
+           ANIMATIONS
+           ============================================================================ */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results-table tbody tr {
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .results-table tbody tr:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .results-table tbody tr:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .results-table tbody tr:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+
+        .results-table tbody tr:nth-child(4) {
+            animation-delay: 0.2s;
+        }
+
+        .results-table tbody tr:nth-child(5) {
+            animation-delay: 0.25s;
+        }
+
+        .results-table tbody tr:nth-child(6) {
+            animation-delay: 0.3s;
+        }
+
+        .results-table tbody tr:nth-child(7) {
+            animation-delay: 0.35s;
+        }
+
+        .results-table tbody tr:nth-child(8) {
+            animation-delay: 0.4s;
+        }
+
+        .results-table tbody tr:nth-child(9) {
+            animation-delay: 0.45s;
+        }
+
+        .results-table tbody tr:nth-child(10) {
+            animation-delay: 0.5s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main-wrapper">
+            <!-- Header -->
+            <header class="header">
+                <div class="logo">🎰</div>
+                <h1>PCSO Lottery Results</h1>
+                <p>Philippine Charity Sweepstakes Office</p>
+            </header>
+
+            <!-- Search Section -->
+            <section class="search-section">
+                <form id="searchForm" class="search-form">
+                    <div class="form-group">
+                        <label for="fromDate">From Date</label>
+                        <input type="date" id="fromDate" name="fromDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="toDate">To Date</label>
+                        <input type="date" id="toDate" name="toDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gameSelect">Select Lotto Game</label>
+                        <select id="gameSelect" name="game">
+                            <option value="ALL">ALL GAMES</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-search" id="searchBtn">
+                        <span class="btn-text">🔍 Search Lotto</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button type="button" class="btn-quick" id="todayBtn">Today</button>
+                    <button type="button" class="btn-quick" id="yesterdayBtn">Yesterday</button>
+                    <button type="button" class="btn-quick" id="lastWeekBtn">Last 7 Days</button>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection">
+                <!-- Loading Overlay -->
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-spinner"></div>
+                </div>
+
+                <!-- Error Message -->
+                <div class="error-message" id="errorMessage" style="display: none;"></div>
+
+                <!-- Results Header -->
+                <div class="results-header">
+                    <h2>Search Results</h2>
+                    <span class="results-count" id="resultsCount"></span>
+                </div>
+
+                <!-- Results Table -->
+                <div class="table-container">
+                    <table class="results-table" id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>Lotto Game</th>
+                                <th>Combinations</th>
+                                <th>Draw Date</th>
+                                <th>Jackpot (PHP)</th>
+                                <th>Winners</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody">
+                            <!-- Results will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="icon">🔍</div>
+                    <h3>No Results Found</h3>
+                    <p>Try adjusting your search criteria or date range.</p>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <p>PCSO Lottery Results &copy; 2024 | Philippine Charity Sweepstakes Office</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // CONFIGURATION
+        // ============================================================================
+        const API_BASE_URL = '';
+        const DEFAULT_GAME = 'ALL';
+
+        // ============================================================================
+        // DOM ELEMENTS
+        // ============================================================================
+        const searchForm = document.getElementById('searchForm');
+        const fromDateInput = document.getElementById('fromDate');
+        const toDateInput = document.getElementById('toDate');
+        const gameSelect = document.getElementById('gameSelect');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsBody = document.getElementById('resultsBody');
+        const resultsCount = document.getElementById('resultsCount');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorMessage = document.getElementById('errorMessage');
+        const emptyState = document.getElementById('emptyState');
+        const resultsTable = document.getElementById('resultsTable');
+
+        // Quick action buttons
+        const todayBtn = document.getElementById('todayBtn');
+        const yesterdayBtn = document.getElementById('yesterdayBtn');
+        const lastWeekBtn = document.getElementById('lastWeekBtn');
+
+        // ============================================================================
+        // INITIALIZATION
+        // ============================================================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Set default dates
+            setDefaultDates();
+
+            // Load lottery games
+            await loadLotteryGames();
+
+            // Load latest results on page load
+            loadLatestResults();
+        });
+
+        // ============================================================================
+        // DATE UTILITIES
+        // ============================================================================
+        function formatDate(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDisplayDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function setDefaultDates() {
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            fromDateInput.value = formatDate(yesterday);
+            toDateInput.value = formatDate(today);
+        }
+
+        // ============================================================================
+        // NUMBER FORMATTING
+        // ============================================================================
+        function formatCurrency(amount) {
+            if (!amount || amount === '-') return '-';
+
+            // Remove any existing PHP or currency symbols
+            let cleanAmount = amount.replace(/[₱PHP,\s]/g, '');
+
+            // Parse as number
+            const num = parseFloat(cleanAmount.replace(/,/g, ''));
+
+            if (isNaN(num)) return amount;
+
+            // Format with Philippine Peso symbol and comma separators
+            return '₱' + num.toLocaleString('en-PH', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // ============================================================================
+        // API FUNCTIONS
+        // ============================================================================
+        async function loadLotteryGames() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/lottery-games`);
+                const data = await response.json();
+
+                if (data && Array.isArray(data)) {
+                    // Clear existing options except the first one
+                    gameSelect.innerHTML = '<option value="ALL">ALL GAMES</option>';
+
+                    // Add game options
+                    data.forEach(game => {
+                        if (game.id !== 'ALL') {
+                            const option = document.createElement('option');
+                            option.value = game.id;
+                            option.textContent = game.name;
+                            gameSelect.appendChild(option);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading lottery games:', error);
+            }
+        }
+
+        async function fetchLotteryResults(fromDate, toDate, game) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/lottery-results`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        from_date: fromDate,
+                        to_date: toDate,
+                        game: game
+                    })
+                });
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching results:', error);
+                return {
+                    success: false,
+                    data: [],
+                    message: 'Network error. Please check your connection and try again.'
+                };
+            }
+        }
+
+        // ============================================================================
+        // UI FUNCTIONS
+        // ============================================================================
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+            searchBtn.classList.add('loading');
+            searchBtn.disabled = true;
+            errorMessage.style.display = 'none';
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+            searchBtn.classList.remove('loading');
+            searchBtn.disabled = false;
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            resultsTable.style.display = 'none';
+            emptyState.style.display = 'none';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        function showEmptyState() {
+            resultsTable.style.display = 'none';
+            emptyState.style.display = 'block';
+            resultsBody.innerHTML = '';
+            resultsCount.textContent = '0 results';
+        }
+
+        function showResults(results) {
+            if (!results || results.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            resultsTable.style.display = 'table';
+            emptyState.style.display = 'none';
+            hideError();
+
+            // Clear existing results
+            resultsBody.innerHTML = '';
+
+            // Populate table
+            results.forEach((result, index) => {
+                const row = document.createElement('tr');
+                row.style.animationDelay = `${Math.min(index * 0.05, 0.5)}s`;
+
+                // Determine jackpot styling
+                const jackpotValue = parseFloat(result.jackpot.replace(/[₱,\s]/g, '')) || 0;
+                const jackpotClass = jackpotValue > 10000000 ? 'high' : '';
+
+                // Determine winners styling
+                const winnersClass = result.winners === '-' || result.winners === '0' ? 'zero' : '';
+
+                row.innerHTML = `
+                    <td class="game-cell">
+                        <span class="game-badge">${result.game_name}</span>
+                    </td>
+                    <td class="combination-cell">${result.combinations}</td>
+                    <td>${result.draw_date}</td>
+                    <td class="jackpot-cell ${jackpotClass}">${formatCurrency(result.jackpot)}</td>
+                    <td class="winners-cell">
+                        <span class="winners-badge ${winnersClass}">${result.winners}</span>
+                    </td>
+                `;
+
+                resultsBody.appendChild(row);
+            });
+
+            // Update count
+            resultsCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''}`;
+        }
+
+        // ============================================================================
+        // SEARCH FUNCTIONS
+        // ============================================================================
+        async function performSearch() {
+            const fromDate = fromDateInput.value;
+            const toDate = toDateInput.value;
+            const game = gameSelect.value;
+
+            // Validate dates
+            if (!fromDate || !toDate) {
+                showError('Please select both FROM DATE and TO DATE.');
+                return;
+            }
+
+            if (fromDate > toDate) {
+                showError('FROM DATE cannot be after TO DATE.');
+                return;
+            }
+
+            // Show loading state
+            showLoading();
+
+            try {
+                // Fetch results
+                const result = await fetchLotteryResults(fromDate, toDate, game);
+
+                if (result.success) {
+                    showResults(result.data);
+                } else {
+                    showError(result.message || 'An error occurred while fetching results.');
+                }
+            } catch (error) {
+                showError('An unexpected error occurred. Please try again.');
+                console.error('Search error:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadLatestResults() {
+            showLoading();
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/latest-results`);
+                const result = await response.json();
+
+                if (result.success) {
+                    showResults(result.data);
+                } else {
+                    // Don't show error on initial load, just show empty state
+                    showEmptyState();
+                }
+            } catch (error) {
+                console.error('Error loading latest results:', error);
+                showEmptyState();
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ============================================================================
+        // EVENT LISTENERS
+        // ============================================================================
+
+        // Form submission
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            performSearch();
+        });
+
+        // Quick action buttons
+        todayBtn.addEventListener('click', () => {
+            const today = new Date();
+            fromDateInput.value = formatDate(today);
+            toDateInput.value = formatDate(today);
+            gameSelect.value = 'ALL';
+            performSearch();
+        });
+
+        yesterdayBtn.addEventListener('click', () => {
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            fromDateInput.value = formatDate(yesterday);
+            toDateInput.value = formatDate(yesterday);
+            gameSelect.value = 'ALL';
+            performSearch();
+        });
+
+        lastWeekBtn.addEventListener('click', () => {
+            const today = new Date();
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+
+            fromDateInput.value = formatDate(weekAgo);
+            toDateInput.value = formatDate(today);
+            gameSelect.value = 'ALL';
+            performSearch();
+        });
+
+        // Date input validation
+        fromDateInput.addEventListener('change', () => {
+            hideError();
+        });
+
+        toDateInput.addEventListener('change', () => {
+            hideError();
+        });
+
+        gameSelect.addEventListener('change', () => {
+            hideError();
+        });
+    </script>
+</body>
+
+</html>
